@@ -76,6 +76,16 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
+CORS_ALLOW_CREDENTIALS = True
+CORS_ALLOWED_ORIGINS = [
+    "https://intime.applikuapp.com",
+    "http://localhost:3000",
+]
+CSRF_TRUSTED_ORIGINS = [
+    "https://intime.applikuapp.com",
+]
+
+
 ROOT_URLCONF = 'project.urls'
 
 TEMPLATES = [
