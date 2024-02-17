@@ -17,6 +17,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 env = environ.Env()
 DEBUG = env.bool("DJANGO_DEBUG", False)
 
+environ.Env.read_env(os.path.join(BASE_DIR, ".env"))
+
 if DEBUG:
     ALLOWED_HOSTS = ['*']
 else:
