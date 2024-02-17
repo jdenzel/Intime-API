@@ -58,3 +58,9 @@ class LoginSerializer(serializers.Serializer):
 
         return data
     
+class TimeClockSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = TimeClock
+        fields = ['id', 'employee', 'date', 'clock_in_time', 'clock_out_time','location', 'role' ]
+    
