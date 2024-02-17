@@ -14,7 +14,7 @@ class SignUpSerializer(serializers.ModelSerializer):
 
     def validate_username(self, data):
         if User.objects.filter(username=data).exists():
-            raise serializers.ValidationError("Username is taken")
+            raise serializers.ValidationError("Username is already taken")
         else:
             return data
     
@@ -31,10 +31,30 @@ class SignUpSerializer(serializers.ModelSerializer):
             return data
         
 
-    def create(self, validated_data):
+    def create(self, validated_data): # Creates the user instance
         user = User.objects.create_user(**validated_data)
         return user
     
     class Meta:
         model = User
         fields = ['username', 'email', 'first_name', 'last_name', 'password']
+
+class LoginSerializer(serializers.Serializer):
+    username = serializers.CharField()
+    password = serializers.CharField()
+
+    def validate(self, data):
+        username = data.get('username', '')
+        password = data.get('password', '')
+
+        if username and password:
+            user = authenticate(request=self.context.get('request'), username=username, password=password) # Authenticates user
+            if user is None:
+                raise serializers.ValidationError("Incorrect username and password")
+            else:
+                data['user'] = user
+        else:
+            raise serializers.ValidationError("You must provide a username and password")
+
+        return data
+    
