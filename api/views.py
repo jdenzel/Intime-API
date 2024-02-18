@@ -74,3 +74,9 @@ class ClockOutView(APIView):
         else:
             return Response({'message': 'Clock out unsuccessful', 'errors': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
         
+class TimeSheetView(ListAPIView):
+    serializer_class = TimeClockSerializer
+
+    def get_queryset(self):
+        user = self.request.user
+        return TimeClock.objects.filter(employee=user) 
