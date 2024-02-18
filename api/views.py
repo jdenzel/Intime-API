@@ -64,3 +64,13 @@ class ClockInView(APIView):
         else:
             return Response({'message': 'Clock in unsuccessful', 'errors': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
         
+class ClockOutView(APIView):
+    def patch(self, request, id):
+        time_clock = TimeClock.objects.get(id=id)
+        serializer = TimeClockSerializer(time_clock, data = request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response({"message": 'Clock out successful!', "data": serializer.data}, status=status.HTTP_200_OK)
+        else:
+            return Response({'message': 'Clock out unsuccessful', 'errors': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+        
