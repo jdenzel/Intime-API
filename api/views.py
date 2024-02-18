@@ -12,3 +12,17 @@ class HomeView(APIView):
             return Response({"message: Success!"}, status=status.HTTP_200_OK)
         except Exception as e:
             return Response({"error": str(e)}, status=status.HTTP_404_NOT_FOUND)
+        
+        
+class SignUpView(APIView):
+    def get(self, request):
+        serializer = SignUpSerializer()
+        return Response(serializer.data)
+
+    def post(self, request):
+        serializer = SignUpSerializer(data = request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response({'message': 'User sign up successful'}, status=status.HTTP_201_CREATED)
+        else:
+            return Response({'message': 'Sign up was unsuccessful', 'errors': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
