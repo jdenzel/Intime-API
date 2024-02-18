@@ -26,3 +26,16 @@ class SignUpView(APIView):
             return Response({'message': 'User sign up successful'}, status=status.HTTP_201_CREATED)
         else:
             return Response({'message': 'Sign up was unsuccessful', 'errors': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+        
+class CheckSessionView(APIView):
+    def get(self, request):
+        user = request.user
+        if user.is_authenticated:
+            
+            return Response({'user': {
+                    'id': user.id,
+                    'username': user.username,
+                    'first_name': user.first_name,
+                    'last_name': user.last_name}}, status=status.HTTP_200_OK)
+        else:
+            return Response({"error": "No active session"}, status=status.HTTP_401_UNAUTHORIZED)
