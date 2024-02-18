@@ -39,3 +39,18 @@ class CheckSessionView(APIView):
                     'last_name': user.last_name}}, status=status.HTTP_200_OK)
         else:
             return Response({"error": "No active session"}, status=status.HTTP_401_UNAUTHORIZED)
+        
+class LoginView(APIView):
+    def post(self, request):
+        serializer = LoginSerializer(data = request.data)
+        if serializer.is_valid():
+            user = serializer.validated_data['user']
+            login(request, user)
+            return Response({"message": 'Login succesful', 'user': {
+                    'id': user.id,
+                    'username': user.username,
+                    'first_name': user.first_name,
+                    'last_name': user.last_name,
+                }}, status=status.HTTP_200_OK)
+        else:
+            return Response({'message': 'Login unsuccesful', 'errors': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
