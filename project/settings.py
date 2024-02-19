@@ -80,6 +80,7 @@ CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOWED_ORIGINS = [
     "https://intime.applikuapp.com",
     "http://localhost:3000",
+    "http://localhost:5173",
 ]
 CSRF_TRUSTED_ORIGINS = [
     "https://intime.applikuapp.com",
