@@ -17,8 +17,6 @@ from .serializers import *
 
 class HomeView(APIView): # Access / route | READ
     def get(self, request):
-        request.session.create()
-        request.session['key'] = 'value'
         try:
             return Response({"message: Success!"}, status=status.HTTP_200_OK)
         except Exception as e:
