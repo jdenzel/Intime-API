@@ -84,12 +84,12 @@ CORS_ALLOWED_ORIGINS = [
     "https://intime.applikuapp.com",
     "http://localhost:3000",
     "http://localhost:5173",
-    "intimeapp.netlify.app",
+    "https://intimeapp.netlify.app",
 ]
 CSRF_TRUSTED_ORIGINS = [
     "https://intime.applikuapp.com",
     "http://localhost:5173",
-    "intimeapp.netlify.app",
+    "https://intimeapp.netlify.app",
 ]
 
 SESSION_COOKIE_SAMESITE = 'None'
