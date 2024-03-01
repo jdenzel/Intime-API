@@ -89,6 +89,9 @@ CSRF_TRUSTED_ORIGINS = [
     "https://intime.applikuapp.com",
 ]
 
+SESSION_COOKIE_SAMESITE = 'None'
+SESSION_COOKIE_SECURE = True
+
 
 ROOT_URLCONF = 'project.urls'
 
