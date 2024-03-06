@@ -3,6 +3,8 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.generics import ListAPIView
 from django.contrib.auth import login, logout
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.authentication import TokenAuthentication
 from .models import *
 from .serializers import *
 
@@ -16,6 +18,9 @@ from .serializers import *
 # 403 server refused to authorize request
 
 class HomeView(APIView): # Access / route | READ
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
+
     def get(self, request):
         try:
             return Response({"message: Success!"}, status=status.HTTP_200_OK)
@@ -65,6 +70,9 @@ class LoginView(APIView): # Access /login route, logs in user | READ
             return Response({'message': 'Login unsuccesful', 'errors': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
         
 class LogoutView(APIView): # Access /logout route, logs out user | DELETE
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
+
     def post(self, request):
         if request.user.is_authenticated:
             logout(request)
@@ -73,6 +81,9 @@ class LogoutView(APIView): # Access /logout route, logs out user | DELETE
             return Response({"message": 'Logout unsuccessful, no active session'}, status=status.HTTP_400_BAD_REQUEST)
         
 class ClockInView(APIView): # Access /clockin route, adds a timeclock instance to database | CREATE
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
+
     def post(self, request):
         serializer = TimeClockSerializer(data = request.data)
         if serializer.is_valid():
@@ -82,6 +93,9 @@ class ClockInView(APIView): # Access /clockin route, adds a timeclock instance t
             return Response({'message': 'Clock in unsuccessful', 'errors': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
         
 class ClockOutView(APIView): # Access /clockout route, updates timeclock instance with that has id with a new clock_out field | UPDATE
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
+
     def patch(self, request, id):
         time_clock = TimeClock.objects.get(id=id)
         serializer = TimeClockSerializer(time_clock, data = request.data, partial=True)
@@ -92,6 +106,9 @@ class ClockOutView(APIView): # Access /clockout route, updates timeclock instanc
             return Response({'message': 'Clock out unsuccessful', 'errors': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
         
 class TimeSheetView(ListAPIView): # Access /timesheet route, shows the user's timeclock instances | READ
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
+    
     serializer_class = TimeClockSerializer
 
     def get_queryset(self):

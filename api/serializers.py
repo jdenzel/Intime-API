@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from rest_framework.authentication import authenticate
+from rest_framework.authtoken.models import Token
 from django.contrib.auth.models import User
 from .models import *
 
@@ -33,7 +34,8 @@ class SignUpSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data): # Creates the user instance
         user = User.objects.create_user(**validated_data)
-        return user
+        token, created = Token.objects.get_or_create(user=user)
+        return {'user': user, 'token': token.key}
     
     class Meta:
         model = User
@@ -53,6 +55,8 @@ class LoginSerializer(serializers.Serializer):
                 raise serializers.ValidationError("Incorrect username and password")
             else:
                 data['user'] = user
+                token, created = Token.objects.get_or_create(user=user)
+                data['token'] = token.key 
         else:
             raise serializers.ValidationError("You must provide a username and password")
 
