@@ -5,6 +5,7 @@ from rest_framework.generics import ListAPIView
 from django.contrib.auth import login, logout
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.authentication import TokenAuthentication
+from django.shortcuts import get_object_or_404
 from .models import *
 from .serializers import *
 
@@ -35,9 +36,12 @@ class SignUpView(APIView): # Access /signup route, adds a new user instance to d
         serializer = SignUpSerializer(data = request.data)
         if serializer.is_valid():
             serializer.save()
-            return Response({'message': 'User sign up successful!'}, status=status.HTTP_201_CREATED)
-        else:
-            return Response({'message': 'Sign up was unsuccessful', 'errors': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+            user = User.objects.get(username=request.data['username'])
+            user.set_password(request.data['password'])
+            user.save()
+            token = Token.objects.create(user=user)
+            return Response({'message': 'User sign up successful!', "token": token.key, "user": serializer.data}, status=status.HTTP_201_CREATED)
+        return Response({'message': 'Sign up was unsuccessful', 'errors': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
         
 class CheckSessionView(APIView): # Checks if there is a user, Access signup route | READ
     def get(self, request):
@@ -54,18 +58,24 @@ class CheckSessionView(APIView): # Checks if there is a user, Access signup rout
         
 class LoginView(APIView): # Access /login route, logs in user | READ
     def post(self, request):
-        serializer = LoginSerializer(data = request.data)
-        if serializer.is_valid():
-            user = serializer.validated_data['user']
-            login(request, user)
-            return Response({"message": 'Login succesful!', 'user': {
-                    'id': user.id,
-                    'username': user.username,
-                    'first_name': user.first_name,
-                    'last_name': user.last_name,
-                }}, status=status.HTTP_200_OK)
-        else:
-            return Response({'message': 'Login unsuccesful', 'errors': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+        user = get_object_or_404(User, username = request.data['username'])
+        if not user.check_password(request.data['password']):
+            return Response(status=status.HTTP_404_NOT_FOUND)
+        token, created = Token.objects.get_or_create(user = user)
+        serializer = LoginSerializer(instance = user)
+        return Response({'message': 'User sign up successful!', "token": token.key, "user": serializer.data})
+        # serializer = LoginSerializer(data = request.data)
+        # if serializer.is_valid():
+        #     user = serializer.validated_data['user']
+        #     login(request, user)
+        #     return Response({"message": 'Login succesful!', 'user': {
+        #             'id': user.id,
+        #             'username': user.username,
+        #             'first_name': user.first_name,
+        #             'last_name': user.last_name,
+        #         }}, status=status.HTTP_200_OK)
+        # else:
+        #     return Response({'message': 'Login unsuccesful', 'errors': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
         
 class LogoutView(APIView): # Access /logout route, logs out user | DELETE
 

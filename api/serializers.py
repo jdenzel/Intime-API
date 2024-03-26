@@ -32,10 +32,10 @@ class SignUpSerializer(serializers.ModelSerializer):
             return data
         
 
-    def create(self, validated_data): # Creates the user instance
-        user = User.objects.create_user(**validated_data)
-        token, created = Token.objects.get_or_create(user=user)
-        return {'user': user, 'token': token.key}
+    # def create(self, validated_data): # Creates the user instance
+    #     user = User.objects.create_user(**validated_data)
+    #     token, created = Token.objects.get_or_create(user=user)
+    #     return {'user': user, 'token': token.key}
     
     class Meta:
         model = User
