@@ -42,25 +42,29 @@ class SignUpSerializer(serializers.ModelSerializer):
         fields = ['username', 'email', 'first_name', 'last_name', 'password']
 
 class LoginSerializer(serializers.Serializer):
-    username = serializers.CharField()
-    password = serializers.CharField()
+    # username = serializers.CharField()
+    # password = serializers.CharField()
 
-    def validate(self, data):
-        username = data.get('username', '')
-        password = data.get('password', '')
+    # def validate(self, data):
+    #     username = data.get('username', '')
+    #     password = data.get('password', '')
 
-        if username and password:
-            user = authenticate(request=self.context.get('request'), username=username, password=password) # Authenticates user
-            if user is None:
-                raise serializers.ValidationError("Incorrect username and password")
-            else:
-                data['user'] = user
-                token, created = Token.objects.get_or_create(user=user)
-                data['token'] = token.key 
-        else:
-            raise serializers.ValidationError("You must provide a username and password")
+    #     if username and password:
+    #         user = authenticate(request=self.context.get('request'), username=username, password=password) # Authenticates user
+    #         if user is None:
+    #             raise serializers.ValidationError("Incorrect username and password")
+    #         else:
+    #             data['user'] = user
+    #             token, created = Token.objects.get_or_create(user=user)
+    #             data['token'] = token.key 
+    #     else:
+    #         raise serializers.ValidationError("You must provide a username and password")
 
-        return data
+    #     return data
+
+    class Meta:
+        model = User
+        fields = ['id', 'username', 'password', 'first_name', 'last_name']
     
 class TimeClockSerializer(serializers.ModelSerializer):
 
