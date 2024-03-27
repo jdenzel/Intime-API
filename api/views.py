@@ -43,18 +43,18 @@ class SignUpView(APIView): # Access /signup route, adds a new user instance to d
             return Response({'message': 'User sign up successful!', "token": token.key, "user": serializer.data}, status=status.HTTP_201_CREATED)
         return Response({'message': 'Sign up was unsuccessful', 'errors': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
         
-# class CheckSessionView(APIView): # Checks if there is a user, Access signup route | READ
-#     def get(self, request):
-#         user = request.user
-#         if user.is_authenticated:
+class CheckSessionView(APIView): # Checks if there is a user, Access signup route | READ
+    def get(self, request):
+        user = request.user
+        if user.is_authenticated:
             
-#             return Response({'user': {
-#                     'id': user.id,
-#                     'username': user.username,
-#                     'first_name': user.first_name,
-#                     'last_name': user.last_name}}, status=status.HTTP_200_OK)
-#         else:
-#             return Response({"error": "No active session"}, status=status.HTTP_401_UNAUTHORIZED)
+            return Response({'user': {
+                    'id': user.id,
+                    'username': user.username,
+                    'first_name': user.first_name,
+                    'last_name': user.last_name}}, status=status.HTTP_200_OK)
+        else:
+            return Response({"error": "No active session"}, status=status.HTTP_401_UNAUTHORIZED)
         
 class LoginView(APIView): # Access /login route, logs in user | READ
     def post(self, request):
