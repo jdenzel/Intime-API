@@ -3,8 +3,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.generics import ListAPIView
 from django.contrib.auth import login, logout
-from rest_framework.permissions import IsAuthenticated
-from rest_framework.authentication import TokenAuthentication
+from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 from .models import *
 from .serializers import *
@@ -62,26 +61,14 @@ class LoginView(APIView): # Access /login route, logs in user | READ
         if not user.check_password(request.data['password']):
             return Response(status=status.HTTP_404_NOT_FOUND)
         token, created = Token.objects.get_or_create(user = user)
-        serializer = LoginSerializer(instance = user)
-        return Response({'message': 'User sign up successful!', "token": token.key, 'user': {
-                    'id': user.id,
-                    'username': user.username,
-                    'first_name': user.first_name,
-                    'last_name': user.last_name,
-                }}, status=status.HTTP_200_OK)
-        # serializer = LoginSerializer(data = request.data)
-        # if serializer.is_valid():
-        #     user = serializer.validated_data['user']
-        #     login(request, user)
-        #     return Response({"message": 'Login succesful!', 'user': {
-        #             'id': user.id,
-        #             'username': user.username,
-        #             'first_name': user.first_name,
-        #             'last_name': user.last_name,
-        #         }}, status=status.HTTP_200_OK)
-        # else:
-        #     return Response({'message': 'Login unsuccesful', 'errors': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
-        
+        response = HttpResponse()
+        response.set_cookie('auth_token', token.key, httponly=True, samesite='None', secure=True)
+        response.data = {'message': 'User sign up successful!', "user": {
+            'id': user.id,
+            'username': user.username,
+            'first_name': user.first_name,
+            'last_name': user.last_name,
+        }}
 class LogoutView(APIView): # Access /logout route, logs out user | DELETE
 
     def post(self, request):
