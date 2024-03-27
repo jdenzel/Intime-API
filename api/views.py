@@ -63,7 +63,12 @@ class LoginView(APIView): # Access /login route, logs in user | READ
             return Response(status=status.HTTP_404_NOT_FOUND)
         token, created = Token.objects.get_or_create(user = user)
         serializer = LoginSerializer(instance = user)
-        return Response({'message': 'User sign up successful!', "token": token.key, "user": serializer.data})
+        return Response({'message': 'User sign up successful!', "token": token.key, 'user': {
+                    'id': user.id,
+                    'username': user.username,
+                    'first_name': user.first_name,
+                    'last_name': user.last_name,
+                }}, status=status.HTTP_200_OK)
         # serializer = LoginSerializer(data = request.data)
         # if serializer.is_valid():
         #     user = serializer.validated_data['user']
