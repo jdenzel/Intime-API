@@ -39,7 +39,12 @@ class SignUpView(APIView): # Access /signup route, adds a new user instance to d
             user.set_password(request.data['password'])
             user.save()
             token = Token.objects.create(user=user)
-            return Response({'message': 'User sign up successful!', "token": token.key, "user": serializer.data}, status=status.HTTP_201_CREATED)
+            response = HttpResponse()
+            response.set_cookie('auth_token', token.key, httponly=True, samesite='None', secure=True)
+            response.data = {'message': 'User sign up successful!', "user": serializer.data}
+            response.status_cod = status.HTTP_201_CREATED
+            
+            return response
         return Response({'message': 'Sign up was unsuccessful', 'errors': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
         
 class CheckSessionView(APIView): # Checks if there is a user, Access signup route | READ
@@ -69,6 +74,8 @@ class LoginView(APIView): # Access /login route, logs in user | READ
             'first_name': user.first_name,
             'last_name': user.last_name,
         }}
+        response.status_code = status.HTTP_200_OK
+        return response
 class LogoutView(APIView): # Access /logout route, logs out user | DELETE
 
     def post(self, request):
