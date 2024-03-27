@@ -62,7 +62,7 @@ class LoginView(APIView): # Access /login route, logs in user | READ
         if not user.check_password(request.data['password']):
             return Response(status=status.HTTP_404_NOT_FOUND)
         token, created = Token.objects.get_or_create(user = user)
-        login(user)
+        login(request, user)
         return Response({'message': 'User sign up successful!', "token": token.key, 'user': {
                     'id': user.id,
                     'username': user.username,
